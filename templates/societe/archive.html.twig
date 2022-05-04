@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle societe{% endblock %}
+
+
+
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center">
+        <h3>Archivage societe </h3>
+        <span>
+    <a href="{{ path('societe_index') }}">liste des societe</a></span>
+    </div>
+
+    {{ form_start(form_societe_archive) }}
+    {{ form_row(form_societe_archive.nom) }}
+    {{ form_row(form_societe_archive.siren) }}
+    {{ form_row(form_societe_archive.villeImmatriculation) }}
+    {{ form_row(form_societe_archive.capital) }}
+    {{ form_row(form_societe_archive.formJuridique) }}
+    {{form_row(form_societe_archive.dateChangementImmatriculation) }}
+    <button class="btn btn-success">{{ button_label|default('Enregistrer') }}</button>
+    {{ form_end(form_societe_archive) }}
+
+
+{% endblock %}
+
+{#{% block javascripts %}#}
+{#    {{ parent() }}#}
+{#    <script>#}
+{#        jQuery(document).ready(function () {#}
+
+{#            $('.dateChangementImmatriculation').hide();#}
+{#        });#}
+{#    </script>#}
+{#{% endblock %}#}
+
+
+
+

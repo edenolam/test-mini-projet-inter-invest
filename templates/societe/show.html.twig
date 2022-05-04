@@ -1,0 +1,143 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Societe{% endblock %}
+
+{% block body %}
+
+    <div class="d-flex justify-content-between align-items-center">
+        <h3>Societe {{ societe.nom }} </h3>
+        <span></span>
+        <span>
+    <a href="{{ path('societe_index') }}">liste des societe</a></span>
+    </div>
+
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>Nom de la societe</th>
+            <td>{{ societe.nom }}</td>
+        </tr>
+        <tr>
+            <th>Numero de SIREN</th>
+            <td>{{ societe.siren }}</td>
+        </tr>
+        <tr>
+            <th>Ville d'immatriculation</th>
+            <td>{{ societe.villeImmatriculation }}</td>
+        </tr>
+        <tr>
+            <th>Date d'immatriculation</th>
+            <td>{{ societe.dateImmatriculation ? societe.dateImmatriculation|date('d-m-Y') : '' }}</td>
+        </tr>
+        {% if societe.dateChangementImmatriculation %}
+            <tr>
+                <th>Date de modification</th>
+                <td>{{ societe.dateChangementImmatriculation ? societe.dateChangementImmatriculation|date('d-m-Y H:i:s') : '' }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>Capital</th>
+            <td>{{ societe.capital }} €</td>
+        </tr>
+        <tr>
+            <th>Forme juridique</th>
+            <td>{{ societe.formJuridique.statut }}</td>
+        </tr>
+
+        {% for adresse in societe.adresses %}
+            <tr>
+                <th>Adresse numero {{ adresse.id }}</th>
+                <td>
+                    <span>
+                        {{ adresse.numero }}
+                        {{ adresse.typeVoie }}
+                        {{ adresse.nomVoie }}
+                        {{ adresse.ville }}
+                        {{ adresse.codePostale }}
+                           <a href="{{ path('app_adresse_edit', {'id': adresse.id}) }}"><i class='far fa-edit'
+                                                                                           title="modifier"></i></a>
+                           <a href="{{ path('app_adresse_delete', {'id': adresse.id}) }}"><i class='fas fa-trash'
+                                                                                             title="supprimer"></i></a>
+                    </span>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <h4>Historique</h4>
+    <table class="table table-striped">
+        <thead>
+        <tr class="bg-secondary text-light">
+            <th>Nom de la societe</th>
+            <th>Numero de SIREN</th>
+            <th>Ville d'mmatriculation</th>
+            <th>Date d'immatriculation</th>
+            <th>Date de modification</th>
+            <th>Capital</th>
+            <th>Forme juridique</th>
+            <th>Adresse</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for historique in societe.historiques %}
+            <tr>
+                <td>{{ historique.nom }}</td>
+                <td>{{ historique.siren }}</td>
+                <td>{{ historique.villeImmatriculation }}</td>
+                <td>{{ historique.dateImmatriculation ? societe.dateImmatriculation|date('d-m-Y') : '' }}</td>
+                <td>{{ historique.dateChangementImmatriculation ? societe.dateChangementImmatriculation|date('d-m-Y H:i:s') : '' }}</td>
+                <td>{{ historique.capital }} €</td>
+                <td>{{ historique.formJuridique.statut }}</td>
+                {% if historique.adresses|length > 0 %}
+                    <td>
+                        {% for adresse in historique.adresses %}
+                            <p>
+                                {{ adresse.numero }}
+                                {{ adresse.typeVoie }}
+                                {{ adresse.nomVoie }}
+                                {{ adresse.codePostale }}
+                            </p>
+
+                        {% endfor %}
+                    </td>
+                {% else %}
+                    <td colspan="7">Pas d'adresse</td>
+                {% endif %}
+
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">Pas d'historique</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('societe_edit', {'id': societe.id}) }}" class="btn btn-info">Modifier {{ societe.nom }}</a>
+
+    <button type="button" id="ajouterAdresse" class="btn btn-success">Ajouter une adresse</button>
+
+    <div id="formAdress" class="mt-5">
+        {{ form_start(formAdresse) }}
+        {{ form_widget(formAdresse) }}
+        <button type="submit" class="btn btn-success">
+            Ajouter
+        </button>
+        {{ form_end(formAdresse) }}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        $(document).ready(function () {
+            $("#formAdress").hide();
+            $("#ajouterAdresse").click(function () {
+                $("#formAdress").show();
+                $("#ajouterAdresse").hide();
+            });
+        });
+    </script>
+{% endblock %}

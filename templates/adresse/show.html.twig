@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Adresse{% endblock %}
+
+{% block body %}
+
+    <div class="list-group-item d-flex justify-content-between align-items-center w-50 m-5">
+        Adresse :
+        <span>
+            {{ adresse.numero }}
+            {{ adresse.typeVoie }}
+            {{ adresse.nomVoie }}
+            {{ adresse.ville }}
+            {{ adresse.codePostale }}
+        </span>
+    </div>
+
+<div class="m-5">
+    <form method="post" action="{{ path('app_adresse_delete', {'id': adresse.id}) }}" onsubmit="return confirm('supprimer cete adresse?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ adresse.id) }}">
+        <button class="btn btn-danger">Supprimer</button>
+    </form>
+</div>
+
+{% endblock %}

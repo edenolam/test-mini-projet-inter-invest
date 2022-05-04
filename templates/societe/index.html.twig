@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Societe{% endblock %}
+
+{% block body %}
+    <h3>Societes - <span class="badge badge-pill badge-primary">{{ societes|length }}</span></h3>
+
+    <table class="table table-striped">
+        <thead>
+        <tr class="bg-secondary text-light">
+            <th>Enregistrement</th>
+            <th>Nom</th>
+            <th>Numero de SIREN</th>
+            <th>Ville d'mmatriculation</th>
+            <th>Date d'immatriculation</th>
+            {% if societes %}
+                <th>Date de modification</th>
+            {% endif %}
+            <th>Capital</th>
+            <th>Forme juridique</th>
+            <th>actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for societe in societes %}
+            <tr>
+                <td>{{ societe.id }}</td>
+                <td>{{ societe.nom }}</td>
+                <td>{{ societe.siren }}</td>
+                <td>{{ societe.villeImmatriculation }}</td>
+                <td>{{ societe.dateImmatriculation ? societe.dateImmatriculation|date('d-m-Y') : '' }}</td>
+                <td>{{ societe.dateChangementImmatriculation ? societe.dateChangementImmatriculation|date('d-m-Y H:i:s') : '' }}</td>
+                <td>{{ societe.capital }} €</td>
+                <td>{{ societe.formJuridique.statut }}</td>
+                <td>
+                    <a href="{{ path('societe_show', {'id': societe.id}) }}"><i class='far fa-eye' title="voir"></i></a>
+                    <a href="{{ path('societe_edit', {'id': societe.id}) }}"><i class='far fa-edit'
+                                                                                title="modifier"></i></a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">Pas d'enregistrements</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('societe_new') }}" class="btn btn-primary">Ajouter une societe <i class="fas fa-plus"
+                                                                                       title="ajouter societe"></i></a>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier{% endblock %}
+
+
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center">
+        <h3>Modifier {{ societe.nom }} </h3>
+        <span>
+    <a href="{{ path('societe_index') }}">liste des societe</a></span>
+    </div>
+
+
+    {{ form_start(form_societe) }}
+    {{ form_row(form_societe.nom) }}
+    {{ form_row(form_societe.siren) }}
+    {{ form_row(form_societe.villeImmatriculation) }}
+    {{ form_row(form_societe.capital) }}
+    {{ form_row(form_societe.formJuridique) }}
+    <button class="btn btn-success">{{ button_label|default('Enregistrer') }}</button>
+    {{ form_end(form_societe) }}
+
+    {% if societe.adresses|length > 0 %}
+        <div class="row mt-5">
+            <h4>Adresses</h4>
+            <table class="table table-striped">
+                <thead>
+                <tr class="bg-secondary">
+                    <th>Numero de rue</th>
+                    <th>Type de voie</th>
+                    <th>Nom de voie</th>
+                    <th>Ville</th>
+                    <th>Cp</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for adresse in societe.adresses %}
+                    <tr>
+                        <td>{{ adresse.numero }}</td>
+                        <td>{{ adresse.typeVoie }}</td>
+                        <td>{{ adresse.nomVoie }}</td>
+                        <td>{{ adresse.ville }}</td>
+                        <td>{{ adresse.codePostale }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}
+
