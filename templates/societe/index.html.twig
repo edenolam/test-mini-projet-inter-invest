@@ -28,10 +28,10 @@
                 <td>{{ societe.nom }}</td>
                 <td>{{ societe.siren }}</td>
                 <td>{{ societe.villeImmatriculation }}</td>
-                <td>{{ societe.dateImmatriculation ? societe.dateImmatriculation|date('d-m-Y') : '' }}</td>
-                <td>{{ societe.dateChangementImmatriculation ? societe.dateChangementImmatriculation|date('d-m-Y H:i:s') : '' }}</td>
+                <td>{{ societe.createdAt ? societe.createdAt|date('d-m-Y') : '' }}</td>
+                <td>{{ societe.updatedAt ? societe.updatedAt|date('d-m-Y H:i:s') : '' }}</td>
                 <td>{{ societe.capital }} €</td>
-                <td>{{ societe.formJuridique.statut }}</td>
+                <td>{{ societe.formeJuridique.statut }}</td>
                 <td>
                     <a href="{{ path('societe_show', {'id': societe.id}) }}"><i class='far fa-eye' title="voir"></i></a>
                     <a href="{{ path('societe_edit', {'id': societe.id}) }}"><i class='far fa-edit'

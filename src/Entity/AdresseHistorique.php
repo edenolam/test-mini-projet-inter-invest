@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\AdresseRepository;
+use App\Repository\AdresseHistoriqueRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=AdresseRepository::class)
+ * @ORM\Entity(repositoryClass=AdresseHistoriqueRepository::class)
  */
-class Adresse
+class AdresseHistorique
 {
     /**
      * @ORM\Id
@@ -18,7 +18,7 @@ class Adresse
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=10)
+     * @ORM\Column(type="integer")
      */
     private $numero;
 
@@ -33,32 +33,31 @@ class Adresse
     private $nomVoie;
 
     /**
+     * @ORM\Column(type="string", length=5)
+     */
+    private $codepostal;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=SocieteHistorique::class, inversedBy="adresseHistoriques")
+     */
+    private $societeHistorique;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $ville;
-
-    /**
-     * @ORM\Column(type="string", length=5)
-     */
-    private $codePostale;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Societe::class, inversedBy="adresses", cascade={"persist"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     */
-    private $societe;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNumero(): ?string
+    public function getNumero(): ?int
     {
         return $this->numero;
     }
 
-    public function setNumero(string $numero): self
+    public function setNumero(int $numero): self
     {
         $this->numero = $numero;
 
@@ -89,6 +88,30 @@ class Adresse
         return $this;
     }
 
+    public function getCodepostal(): ?string
+    {
+        return $this->codepostal;
+    }
+
+    public function setCodepostal(string $codepostal): self
+    {
+        $this->codepostal = $codepostal;
+
+        return $this;
+    }
+
+    public function getSocieteHistorique(): ?SocieteHistorique
+    {
+        return $this->societeHistorique;
+    }
+
+    public function setSocieteHistorique(?SocieteHistorique $societeHistorique): self
+    {
+        $this->societeHistorique = $societeHistorique;
+
+        return $this;
+    }
+
     public function getVille(): ?string
     {
         return $this->ville;
@@ -97,30 +120,6 @@ class Adresse
     public function setVille(string $ville): self
     {
         $this->ville = $ville;
-
-        return $this;
-    }
-
-    public function getCodePostale(): ?string
-    {
-        return $this->codePostale;
-    }
-
-    public function setCodePostale(string $codePostale): self
-    {
-        $this->codePostale = $codePostale;
-
-        return $this;
-    }
-
-    public function getSociete(): ?Societe
-    {
-        return $this->societe;
-    }
-
-    public function setSociete(?Societe $societe): self
-    {
-        $this->societe = $societe;
 
         return $this;
     }

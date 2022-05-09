@@ -3,13 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Adresse;
+use App\Entity\AdresseHistorique;
 use App\Entity\FormeJuridique;
 use App\Entity\Societe;
 use App\Entity\SocieteHistorique;
 use App\Form\AdresseType;
 use App\Form\SocieteType;
-use App\Repository\SocieteHistoriqueRepository;
 use App\Repository\SocieteRepository;
+use App\Service\MessageGenerator;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +26,7 @@ class SocieteController extends AbstractController
      */
     public function index(SocieteRepository $societeRepository): Response
     {
+
         return $this->render('societe/index.html.twig', [
             'societes' => $societeRepository->findAll(),
         ]);
@@ -32,15 +35,17 @@ class SocieteController extends AbstractController
     /**
      * @Route("/new", name="societe_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, SocieteRepository $societeRepository): Response
+    public function new(Request $request, SocieteRepository $societeRepository, MessageGenerator $messageGenerator): Response
     {
         $societe = new Societe();
         $form = $this->createForm(SocieteType::class, $societe);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $societe->setDateImmatriculation(new \DateTime());
+            $societe->setCreatedAt(new \DateTimeImmutable('now'));
             $societeRepository->add($societe);
+            $message = $messageGenerator->getHappyMessage();
+            $this->addFlash('success', $message);
             return $this->redirectToRoute('societe_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -53,7 +58,7 @@ class SocieteController extends AbstractController
     /**
      * @Route("/{id}", name="societe_show", methods={"GET", "POST"})
      */
-    public function show(Societe $societe, Request $request, EntityManagerInterface $manager): Response
+    public function show(Societe $societe, Request $request, EntityManagerInterface $manager, SocieteHistorique $historique): Response
     {
        $adresse = new Adresse();
         $form = $this->createForm(AdresseType::class, $adresse);
@@ -66,6 +71,7 @@ class SocieteController extends AbstractController
         }
         return $this->render('societe/show.html.twig', [
             'societe' => $societe,
+            'historique' => $historique,
             'formAdresse' => $form->createView()
         ]);
     }
@@ -79,17 +85,25 @@ class SocieteController extends AbstractController
         $form = $this->createForm(SocieteType::class, $societe);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $societe->setUpdatedAt(new \DateTimeImmutable('now'));
             $societe_historique = new SocieteHistorique();
             $societe_historique->setSociete($societe);
             $societe_historique->setNom($societe->getNom());
             $societe_historique->setSiren($societe->getSiren());
             $societe_historique->setVilleImmatriculation($societe->getVilleImmatriculation());
-            $societe_historique->setDateImmatriculation($societe->getDateImmatriculation());
+            $societe_historique->setCreatedAt($societe->getUpdatedAt());
             $societe_historique->setCapital($societe->getCapital());
-            $societe_historique->setDateChangementImmatriculation(new \DateTime("now"));
-            $societe->setDateChangementImmatriculation(new \DateTime("now"));
-            $societe_historique->setFormJuridique($formeJuridique);
-
+            $societe_historique->setFormJuridique($societe->getFormeJuridique());
+            foreach ($societe->getAdresses() as $adress){
+                $adresseHistorique = new AdresseHistorique();
+                $adresseHistorique->setSocieteHistorique($societe_historique);
+                $adresseHistorique->setNumero($adress->getNumero());
+                $adresseHistorique->setTypeVoie($adress->getTypeVoie());
+                $adresseHistorique->setNomVoie($adress->getNomVoie());
+                $adresseHistorique->setVille($adress->getVille());
+                $adresseHistorique->setCodepostal($adress->getCodePostale());
+                $manager->persist($adresseHistorique);
+            }
             $manager->persist($societe_historique);
             $manager->persist($societe);
             $manager->flush();

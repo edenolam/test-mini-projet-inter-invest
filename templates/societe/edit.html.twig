@@ -7,7 +7,10 @@
     <div class="d-flex justify-content-between align-items-center">
         <h3>Modifier {{ societe.nom }} </h3>
         <span>
-    <a href="{{ path('societe_index') }}">liste des societe</a></span>
+       <a href="{{ path('societe_index') }}" class="btn btn-secondary">Liste des societe <i class="fas fa-list"
+                                                                                            title="lister les societe"></i></a>
+
+        </span>
     </div>
 
 
@@ -16,9 +19,10 @@
     {{ form_row(form_societe.siren) }}
     {{ form_row(form_societe.villeImmatriculation) }}
     {{ form_row(form_societe.capital) }}
-    {{ form_row(form_societe.formJuridique) }}
+    {{ form_row(form_societe.formeJuridique) }}
     <button class="btn btn-success">{{ button_label|default('Enregistrer') }}</button>
     {{ form_end(form_societe) }}
+
 
     {% if societe.adresses|length > 0 %}
         <div class="row mt-5">

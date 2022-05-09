@@ -35,39 +35,34 @@ class SocieteHistorique
     private $villeImmatriculation;
 
     /**
-     * @ORM\Column(type="datetime")
-     */
-    private $dateImmatriculation;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $capital;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Adresse::class, mappedBy="societeHistorique")
-     */
-    private $adresses;
-
-    /**
-     * @ORM\OneToOne(targetEntity=FormeJuridique::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $formJuridique;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $date_changement_immatriculation;
 
     /**
      * @ORM\ManyToOne(targetEntity=Societe::class, inversedBy="historiques")
      */
     private $societe;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AdresseHistorique::class, mappedBy="societeHistorique")
+     */
+    private $adresseHistoriques;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=FormeJuridique::class, inversedBy="societeHistoriques")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $formJuridique;
+
     public function __construct()
     {
-        $this->adresses = new ArrayCollection();
+        $this->adresseHistoriques = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,18 +106,6 @@ class SocieteHistorique
         return $this;
     }
 
-    public function getDateImmatriculation(): ?\DateTimeInterface
-    {
-        return $this->dateImmatriculation;
-    }
-
-    public function setDateImmatriculation(\DateTimeInterface $dateImmatriculation): self
-    {
-        $this->dateImmatriculation = $dateImmatriculation;
-
-        return $this;
-    }
-
     public function getCapital(): ?string
     {
         return $this->capital;
@@ -135,32 +118,56 @@ class SocieteHistorique
         return $this;
     }
 
-    /**
-     * @return Collection<int, Adresse>
-     */
-    public function getAdresses(): Collection
+    public function getSociete(): ?Societe
     {
-        return $this->adresses;
+        return $this->societe;
     }
 
-    public function addAdress(Adresse $adress): self
+    public function setSociete(?Societe $societe): self
     {
-        if (!$this->adresses->contains($adress)) {
-            $this->adresses[] = $adress;
-            $adress->setSocieteHistorique($this);
+        $this->societe = $societe;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AdresseHistorique>
+     */
+    public function getAdresseHistoriques(): Collection
+    {
+        return $this->adresseHistoriques;
+    }
+
+    public function addAdresseHistorique(AdresseHistorique $adresseHistorique): self
+    {
+        if (!$this->adresseHistoriques->contains($adresseHistorique)) {
+            $this->adresseHistoriques[] = $adresseHistorique;
+            $adresseHistorique->setSocieteHistorique($this);
         }
 
         return $this;
     }
 
-    public function removeAdress(Adresse $adress): self
+    public function removeAdresseHistorique(AdresseHistorique $adresseHistorique): self
     {
-        if ($this->adresses->removeElement($adress)) {
+        if ($this->adresseHistoriques->removeElement($adresseHistorique)) {
             // set the owning side to null (unless already changed)
-            if ($adress->getSocieteHistorique() === $this) {
-                $adress->setSocieteHistorique(null);
+            if ($adresseHistorique->getSocieteHistorique() === $this) {
+                $adresseHistorique->setSocieteHistorique(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -170,33 +177,9 @@ class SocieteHistorique
         return $this->formJuridique;
     }
 
-    public function setFormJuridique(FormeJuridique $formJuridique): self
+    public function setFormJuridique(?FormeJuridique $formJuridique): self
     {
         $this->formJuridique = $formJuridique;
-
-        return $this;
-    }
-
-    public function getDateChangementImmatriculation(): ?\DateTimeInterface
-    {
-        return $this->date_changement_immatriculation;
-    }
-
-    public function setDateChangementImmatriculation(?\DateTimeInterface $date_changement_immatriculation): self
-    {
-        $this->date_changement_immatriculation = $date_changement_immatriculation;
-
-        return $this;
-    }
-
-    public function getSociete(): ?Societe
-    {
-        return $this->societe;
-    }
-
-    public function setSociete(?Societe $societe): self
-    {
-        $this->societe = $societe;
 
         return $this;
     }

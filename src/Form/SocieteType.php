@@ -23,12 +23,7 @@ class SocieteType extends AbstractType
             ->add('siren')
             ->add('villeImmatriculation')
             ->add('capital')
-            ->add('formJuridique')
-//            ->add('dateChangementImmatriculation', DateTimeType::class, [
-//                'required' => false,
-//            ])
-
-
+            ->add('formeJuridique')
         ;
     }
 

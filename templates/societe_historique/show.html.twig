@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h4>Historique {{ historique.id }}</h4>
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>Nom de la societe</th>
+            <td>{{ historique.nom }}</td>
+        </tr>
+        <tr>
+            <th>Numero de SIREN</th>
+            <td>{{ historique.siren }}</td>
+        </tr>
+        <tr>
+            <th>Ville d'immatriculation</th>
+            <td>{{ historique.villeImmatriculation }}</td>
+        </tr>
+        <tr>
+            <th>Date de modification d'entreprise</th>
+            <td>{{ historique.createdAt ? historique.createdAt|date('d/m/Y - H:i') : '' }}</td>
+        </tr>
+        <tr>
+            <th>Capital</th>
+            <td>{{ historique.capital }} €</td>
+        </tr>
+        <tr>
+            <th>Forme juridique</th>
+            <td>{{ historique.formJuridique.statut }}</td>
+        </tr>
+        {% if historique.adresseHistoriques|length > 0 %}
+
+            {% for adresse in historique.adresseHistoriques %}
+                <tr>
+                    <th>Adresse numero {{ adresse.id }}</th>
+                    <td>
+                    <span>
+                        {{ adresse.numero }}
+                        {{ adresse.typeVoie }}
+                        {{ adresse.nomVoie }}
+                        {{ adresse.codepostal }}
+                        {{ adresse.ville }}
+                    </span>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">Pas d'adresse</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+
+        </tbody>
+    </table>
+
+    <a href="{{ path('societe_show', {'id': historique.societe.id}) }}">retour</a>
+
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

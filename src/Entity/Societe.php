@@ -46,25 +46,25 @@ class Societe
     private $adresses;
 
     /**
-     * @ORM\OneToOne(targetEntity=FormeJuridique::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $formJuridique;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $date_changement_immatriculation;
-
-    /**
      * @ORM\OneToMany(targetEntity=SocieteHistorique::class, mappedBy="societe")
      */
     private $historiques;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime_immutable")
      */
-    private $dateImmatriculation;
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $updatedAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=FormeJuridique::class, inversedBy="societes")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $formeJuridique;
 
 
     public function __construct()
@@ -155,32 +155,7 @@ class Societe
 
         return $this;
     }
-
-    public function getFormJuridique(): ?FormeJuridique
-    {
-        return $this->formJuridique;
-    }
-
-    public function setFormJuridique(FormeJuridique $formJuridique): self
-    {
-        $this->formJuridique = $formJuridique;
-
-        return $this;
-    }
-
-    public function getDateChangementImmatriculation(): ?\DateTimeInterface
-    {
-        return $this->date_changement_immatriculation;
-    }
-
-    public function setDateChangementImmatriculation(?\DateTimeInterface $date_changement_immatriculation): self
-    {
-        $this->date_changement_immatriculation = $date_changement_immatriculation;
-
-        return $this;
-    }
-
-
+    
     /**
      * @return Collection<int, SocieteHistorique>
      */
@@ -211,14 +186,39 @@ class Societe
         return $this;
     }
 
-    public function getDateImmatriculation(): ?\DateTimeInterface
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->dateImmatriculation;
+        return $this->createdAt;
     }
 
-    public function setDateImmatriculation(\DateTimeInterface $dateImmatriculation): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
-        $this->dateImmatriculation = $dateImmatriculation;
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+
+    public function getFormeJuridique(): ?FormeJuridique
+    {
+        return $this->formeJuridique;
+    }
+
+    public function setFormeJuridique(?FormeJuridique $formeJuridique): self
+    {
+        $this->formeJuridique = $formeJuridique;
 
         return $this;
     }

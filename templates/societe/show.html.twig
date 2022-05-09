@@ -2,20 +2,40 @@
 
 {% block title %}Societe{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
 {% block body %}
 
     <div class="d-flex justify-content-between align-items-center">
         <h3>Societe {{ societe.nom }} </h3>
-        <span></span>
         <span>
-    <a href="{{ path('societe_index') }}">liste des societe</a></span>
+                <a href="{{ path('societe_index') }}" class="btn btn-secondary">Liste des societe <i class="fas fa-list"
+                                                                                                     title="lister les societe"></i></a>
+        </span>
+        <span>
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                Selectionner par date d'archivage
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                   {% for historique in societe.historiques %}
+                       <a class="dropdown-item"
+                          href="{{ path('societe_historique_show', {'id': historique.id}) }}">    {{ historique.createdAt|date('d/m/Y H:i') }}</a>
+                   {% endfor %}
+              </div>
+            </div>
+        </span>
+
     </div>
 
     <table class="table">
         <tbody>
         <tr>
             <th>Nom de la societe</th>
-            <td>{{ societe.nom }}</td>
+            <td>{{ societe.nom|upper }}</td>
         </tr>
         <tr>
             <th>Numero de SIREN</th>
@@ -27,12 +47,12 @@
         </tr>
         <tr>
             <th>Date d'immatriculation</th>
-            <td>{{ societe.dateImmatriculation ? societe.dateImmatriculation|date('d-m-Y') : '' }}</td>
+            <td>{{ societe.createdAt ? societe.createdAt|date('d/m/Y H:i') : '' }}</td>
         </tr>
-        {% if societe.dateChangementImmatriculation %}
+        {% if societe.updatedAt %}
             <tr>
                 <th>Date de modification</th>
-                <td>{{ societe.dateChangementImmatriculation ? societe.dateChangementImmatriculation|date('d-m-Y H:i:s') : '' }}</td>
+                <td>{{ societe.updatedAt ? societe.updatedAt|date('d/m/Y H:i') : '' }}</td>
             </tr>
         {% endif %}
         <tr>
@@ -41,7 +61,7 @@
         </tr>
         <tr>
             <th>Forme juridique</th>
-            <td>{{ societe.formJuridique.statut }}</td>
+            <td>{{ societe.formeJuridique.statut }}</td>
         </tr>
 
         {% for adresse in societe.adresses %}
@@ -64,56 +84,65 @@
         {% endfor %}
         </tbody>
     </table>
-    <h4>Historique</h4>
-    <table class="table table-striped">
-        <thead>
-        <tr class="bg-secondary text-light">
-            <th>Nom de la societe</th>
-            <th>Numero de SIREN</th>
-            <th>Ville d'mmatriculation</th>
-            <th>Date d'immatriculation</th>
-            <th>Date de modification</th>
-            <th>Capital</th>
-            <th>Forme juridique</th>
-            <th>Adresse</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for historique in societe.historiques %}
-            <tr>
-                <td>{{ historique.nom }}</td>
-                <td>{{ historique.siren }}</td>
-                <td>{{ historique.villeImmatriculation }}</td>
-                <td>{{ historique.dateImmatriculation ? societe.dateImmatriculation|date('d-m-Y') : '' }}</td>
-                <td>{{ historique.dateChangementImmatriculation ? societe.dateChangementImmatriculation|date('d-m-Y H:i:s') : '' }}</td>
-                <td>{{ historique.capital }} €</td>
-                <td>{{ historique.formJuridique.statut }}</td>
-                {% if historique.adresses|length > 0 %}
-                    <td>
-                        {% for adresse in historique.adresses %}
-                            <p>
-                                {{ adresse.numero }}
-                                {{ adresse.typeVoie }}
-                                {{ adresse.nomVoie }}
-                                {{ adresse.codePostale }}
-                            </p>
+    {% if societe.historiques|length > 1 %}
+        <div id="historique">
+            <h4>Historique</h4>
+            <table class="table table-striped">
+                <thead>
+                <tr class="bg-secondary text-light">
+                    <th>Nom de la societe</th>
+                    <th>Numero de SIREN</th>
+                    <th>Ville d'mmatriculation</th>
+                    <th>Date d'archivage</th>
+                    <th>Capital</th>
+                    <th>Forme juridique</th>
+                    <th>Adresse</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for historique in societe.historiques %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('societe_historique_show', {'id': historique.id}) }}">{{ historique.nom|upper }}</a>
+                        </td>
+                        <td>{{ historique.siren }}</td>
+                        <td>{{ historique.villeImmatriculation }}</td>
+                        <td>{{ historique.createdAt ? historique.createdAt|date('d/m/Y - H:i') : '' }}</td>
+                        <td>{{ historique.capital }} €</td>
+                        <td>{{ historique.formJuridique.statut }}</td>
+                        {% if historique.adresseHistoriques|length > 0 %}
+                            <td>
+                                <ul class="list-group">
+                                    {% for adresse in historique.adresseHistoriques %}
+                                        <li class="list-group-item">
+                                            {{ adresse.numero }}
+                                            {{ adresse.typeVoie }}
+                                            {{ adresse.nomVoie }}
+                                            {{ adresse.codepostal }}
+                                            {{ adresse.ville }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
 
-                        {% endfor %}
-                    </td>
+                            </td>
+                        {% else %}
+                            <td colspan="7">Pas d'adresse</td>
+                        {% endif %}
+
+                    </tr>
                 {% else %}
-                    <td colspan="7">Pas d'adresse</td>
-                {% endif %}
+                    <tr>
+                        <td colspan="7">Pas d'historique</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
 
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">Pas d'historique</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 
-    <a href="{{ path('societe_edit', {'id': societe.id}) }}" class="btn btn-info">Modifier {{ societe.nom }}</a>
+    <a href="{{ path('societe_edit', {'id': societe.id}) }}" id="modifierSociete"
+       class="btn btn-info">Modifier {{ societe.nom }}</a>
 
     <button type="button" id="ajouterAdresse" class="btn btn-success">Ajouter une adresse</button>
 
@@ -125,14 +154,25 @@
         </button>
         {{ form_end(formAdresse) }}
     </div>
-
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-
     <script>
+
         $(document).ready(function () {
+
+            $("select#datehistorique").click(function () {
+                var open = $(this).data("isopen");
+                if (open) {
+                    window.location.href = $(this).val()
+                }
+                //set isopen to opposite so next time when use clicked select box
+                //it wont trigger this event
+                $(this).data("isopen", !open);
+            });
+
+
             $("#formAdress").hide();
             $("#ajouterAdresse").click(function () {
                 $("#formAdress").show();
