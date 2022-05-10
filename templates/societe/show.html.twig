@@ -16,7 +16,8 @@
         </span>
         <span>
             <div class="dropdown">
-              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                      data-toggle="dropdown"
                       aria-haspopup="true" aria-expanded="false">
                 Selectionner par date d'archivage
               </button>
@@ -87,6 +88,7 @@
     {% if societe.historiques|length > 1 %}
         <div id="historique">
             <h4>Historique</h4>
+            <input id="historiqueSearch" type="text" placeholder="Search..">
             <table class="table table-striped">
                 <thead>
                 <tr class="bg-secondary text-light">
@@ -99,7 +101,7 @@
                     <th>Adresse</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="myTable">
                 {% for historique in societe.historiques %}
                     <tr>
                         <td>
@@ -161,6 +163,13 @@
     <script>
 
         $(document).ready(function () {
+
+            $("#historiqueSearch").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
 
             $("select#datehistorique").click(function () {
                 var open = $(this).data("isopen");

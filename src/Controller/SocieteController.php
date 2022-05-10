@@ -10,8 +10,6 @@ use App\Entity\SocieteHistorique;
 use App\Form\AdresseType;
 use App\Form\SocieteType;
 use App\Repository\SocieteRepository;
-use App\Service\MessageGenerator;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +33,7 @@ class SocieteController extends AbstractController
     /**
      * @Route("/new", name="societe_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, SocieteRepository $societeRepository, MessageGenerator $messageGenerator): Response
+    public function new(Request $request, SocieteRepository $societeRepository): Response
     {
         $societe = new Societe();
         $form = $this->createForm(SocieteType::class, $societe);
@@ -44,8 +42,6 @@ class SocieteController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $societe->setCreatedAt(new \DateTimeImmutable('now'));
             $societeRepository->add($societe);
-            $message = $messageGenerator->getHappyMessage();
-            $this->addFlash('success', $message);
             return $this->redirectToRoute('societe_index', [], Response::HTTP_SEE_OTHER);
         }
 
